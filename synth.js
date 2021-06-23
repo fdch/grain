@@ -53,7 +53,8 @@ var position = new Nexus.Position('#position',{
 
 const channel = new Tone.Channel({ volume: -100});
 
-const lfo = new Tone.LFO(lfofreq, -1,1).connect(channel.pan).start();
+const equalPan = new Tone.Panner();
+const lfo = new Tone.LFO(lfofreq, -1,1).connect(equalPan.pan).start();
 const feedbackDelay = new Tone.FeedbackDelay("8n", 0.5);
 
 const synth = new Tone.MetalSynth({
@@ -66,7 +67,7 @@ const synth = new Tone.MetalSynth({
 });
 
 
-synth.chain(feedbackDelay, channel, Tone.Destination);
+synth.chain(feedbackDelay, channel, equalPan, Tone.Destination);
 
 //funciones
 //On/Off
@@ -106,7 +107,7 @@ const loop = new Tone.Loop((time) => {
 var meter = new Nexus.Meter('#met', {
 	'size': [50,75]
 });
-meter.connect(channel);
+meter.connect(Tone.Destination);
 
 var osci = new Nexus.Oscilloscope('#osci',{
   'size': [150,75]
@@ -127,8 +128,8 @@ var onoff = new Nexus.Button('#onoff',{
 
 onoff.on('change',function(v) {
     Tone.start();
-    console.log("botton");
     Tone.Transport.start();
+    console.log("botton");
 });
 
 // rand.on('change',function(v) {
